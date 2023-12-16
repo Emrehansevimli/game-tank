@@ -12,20 +12,20 @@ class PROTO4_API ABasePawn : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	ABasePawn();
 
 	UPROPERTY(EditAnywhere)
 	int32 heal = 32;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void RotateTurret(FVector LookAtTarget);
 	void Move(float Value);
-	void Turn(float Value);
-
+	void Turn(float Value); 
+	void Rotate(float Value); 
+	void Fire();
+	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -48,9 +48,11 @@ private:
 	class UCameraComponent* CameraComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	float speed = 300.f;
+	float speed = 500.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float turnrate = 100.f;
+	float FireRange = 700.f;
+	float Dist;
 
 	APlayerController* PlayerControllerRef;
 };

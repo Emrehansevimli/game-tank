@@ -9,10 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 
-// Sets default values
 ABasePawn::ABasePawn()
 {
-	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
@@ -30,6 +28,10 @@ ABasePawn::ABasePawn()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
+	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
+	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
+
+
 }
 
 // Called to bind functionality to input
@@ -39,6 +41,8 @@ void ABasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ABasePawn::Move);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ABasePawn::Turn);
+	PlayerInputComponent->BindAxis(TEXT("Rotate"), this, &ABasePawn::Rotate);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ABasePawn::Fire);
 
 }
 
@@ -47,20 +51,26 @@ void ABasePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FHitResult HitResult;
 	if (PlayerControllerRef)
-	{
-		PlayerControllerRef->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	{	
+		FHitResult HitResult;
+		FHitResult Null;
+		PlayerControllerRef->GetHitResultUnderCursor(
+			ECollisionChannel::ECC_Visibility,false,HitResult);
+		RotateTurret(HitResult.ImpactPoint); 
 
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 30.f, 12, FColor::Red, false, -1.f);
-		ABasePawn::RotateTurret(HitResult.ImpactPoint);
+		DrawDebugSphere(
+			GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+
 	}
+
 }
 
-// Called when the game starts or when spawned
 void ABasePawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerControllerRef = Cast<APlayerController>(GetController());
 }
 
 
@@ -68,7 +78,13 @@ void ABasePawn::RotateTurret(FVector LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TurretMesh->GetComponentLocation();
 	FRotator LookAtRotation = FRotator(0.f, ToTarget.Rotation().Yaw, 0.f);
-	TurretMesh->SetWorldRotation(LookAtRotation);
+
+	TurretMesh->SetWorldRotation(
+		FMath::RInterpTo(TurretMesh->GetComponentRotation(), 
+			LookAtRotation, 
+			UGameplayStatics::GetWorldDeltaSeconds(this), 
+			5.f));
+
 }
 
 void ABasePawn::Move(float Value)
@@ -86,4 +102,25 @@ void ABasePawn::Turn(float Value)
 	// yaw = value * deltatime * turnrate
 	DeltaRotation.Yaw = Value * turnrate * UGameplayStatics::GetWorldDeltaSeconds(this);
 	AddActorLocalRotation(DeltaRotation, true);
+}
+
+void ABasePawn::Rotate(float Value)
+{
+	FRotator DeltaRotation = FRotator::ZeroRotator;
+	// yaw = value * deltatime * turnrate
+	DeltaRotation.Yaw = Value * turnrate * UGameplayStatics::GetWorldDeltaSeconds(this);
+	TurretMesh->AddLocalRotation(DeltaRotation, true);
+
+}
+
+void ABasePawn::Fire() 
+{	
+	if (PlayerControllerRef){
+		FVector ProjectileSpawnPointLocation = ProjectileSpawnPoint->GetComponentLocation();
+		FHitResult HitResult;
+		PlayerControllerRef->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, 3.f);
+		
+	}
+	
 }
