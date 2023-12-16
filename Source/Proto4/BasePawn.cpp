@@ -22,14 +22,14 @@ ABasePawn::ABasePawn()
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Mesh"));
 	TurretMesh->SetupAttachment(BaseMesh);
 
+	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
+	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
+
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp);
-
-	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
-	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 
 
 }

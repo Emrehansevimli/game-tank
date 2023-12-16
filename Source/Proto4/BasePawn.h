@@ -48,7 +48,7 @@ private:
 	class UCameraComponent* CameraComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	float speed = 500.f;
+	float speed = 700.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float turnrate = 100.f;
 	float FireRange = 700.f;

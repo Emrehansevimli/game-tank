@@ -1,0 +1,58 @@
+[
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\BasePawn.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\BasePawn.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\Proto4.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\Proto4.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\Proto4.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\TurretPawn.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Unreal_Projects\\game-tank\\Source\\Proto4\\TurretPawn.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Unreal_Projects\\game-tank\\.vscode\\compileCommands_Proto4\\Proto4.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.3\\Engine\\Source"
+	}
+]
