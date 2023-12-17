@@ -70,6 +70,7 @@ void ATurretPawn::RotateTurret(FVector LookAtTarget)
 	FVector ToTarget = LookAtTarget - TurretMesh->GetComponentLocation();
 	FRotator LookAtRotation = FRotator(0.f, ToTarget.Rotation().Yaw, 0.f);
 	TurretMesh->SetWorldRotation(LookAtRotation);
+	UE_LOG(LogTemp, Warning, TEXT("Some warning message") );
 }
 
 void ATurretPawn::Fire()
@@ -79,7 +80,7 @@ void ATurretPawn::Fire()
 	PlayerControllerRef->GetHitResultUnderCursor(
 	ECollisionChannel::ECC_Visibility, false, HitResult);
 	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, 3.f);
-
+	
 }
 
 void ATurretPawn::CheckFireCondition() 
