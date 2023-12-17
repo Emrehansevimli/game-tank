@@ -14,9 +14,6 @@ class PROTO4_API ABasePawn : public APawn
 public:
 	ABasePawn();
 
-	UPROPERTY(EditAnywhere)
-	int32 heal = 32;
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -55,4 +52,8 @@ private:
 	float Dist;
 
 	APlayerController* PlayerControllerRef;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 };

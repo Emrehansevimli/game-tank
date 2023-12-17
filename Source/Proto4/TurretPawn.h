@@ -15,8 +15,6 @@ public:
 	// Sets default values for this pawn's properties
 	ATurretPawn();
 
-	UPROPERTY(EditAnywhere)
-	int32 heal = 32;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,6 +54,10 @@ private:
 	
 	FTimerHandle FireRateTimerHandle;
 	float FireRate = 2.f;
-	float Dist = 400.f;
+
+	bool InFireRange();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TSubclassOf<class AProjectile> ProjectileClass;
 
 };

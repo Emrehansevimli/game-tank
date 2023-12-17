@@ -3,11 +3,13 @@
 
 #include "BasePawn.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Projectile.h"
 
 ABasePawn::ABasePawn()
 {
@@ -58,9 +60,7 @@ void ABasePawn::Tick(float DeltaTime)
 		PlayerControllerRef->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,false,HitResult);
 		RotateTurret(HitResult.ImpactPoint); 
-
-		DrawDebugSphere(
-			GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
 
 	}
 
@@ -115,12 +115,11 @@ void ABasePawn::Rotate(float Value)
 
 void ABasePawn::Fire() 
 {	
-	if (PlayerControllerRef){
-		FVector ProjectileSpawnPointLocation = ProjectileSpawnPoint->GetComponentLocation();
-		FHitResult HitResult;
-		PlayerControllerRef->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, 3.f);
-		
-	}
-	
+	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
+	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
+	//DrawDebugSphere(GetWorld(),Location,25.f,12,FColor::Red,false,3.f);
+
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Location, Rotation);
+	Projectile->SetOwner(this);
+
 }

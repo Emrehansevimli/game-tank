@@ -10,6 +10,8 @@
 #include "DrawDebugHelpers.h"
 #include "BasePawn.h"
 #include "TimerManager.h"
+#include "GameFramework/Actor.h"
+#include "Projectile.h"
 
 // Sets default values
 ATurretPawn::ATurretPawn()
@@ -35,10 +37,9 @@ ATurretPawn::ATurretPawn()
 void ATurretPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	BasePawn = Cast<ABasePawn>(UGameplayStatics::GetPlayerPawn(this, 0));
 
-	//GetWorldTimerManager().SetTimer(FireRateTimerHandle, this, &ATurretPawn::CheckFireCondition, FireRate, true);
+	GetWorldTimerManager().SetTimer(FireRateTimerHandle, this, &ATurretPawn::CheckFireCondition, FireRate, true);
 
 }
 
@@ -47,13 +48,9 @@ void ATurretPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (BasePawn)
+	if(InFireRange())
 	{
-		Dist = FVector::Dist(GetActorLocation(), BasePawn->GetActorLocation());
-		if (Dist <= FireRange)
-		{
-			RotateTurret(BasePawn->GetActorLocation());
-		}
+		RotateTurret(BasePawn->GetActorLocation());
 	}
 
 }
@@ -74,22 +71,33 @@ void ATurretPawn::RotateTurret(FVector LookAtTarget)
 
 void ATurretPawn::Fire()
 {
-	FVector ProjectileSpawnPointLocation = ProjectileSpawnPoint->GetComponentLocation();
-	FHitResult HitResult;
-	PlayerControllerRef->GetHitResultUnderCursor(
-	ECollisionChannel::ECC_Visibility, false, HitResult);
-	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, 3.f);
+	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
+	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
+	//DrawDebugSphere(GetWorld(),Location,25.f,12,FColor::Red,false,3.f);
+
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Location, Rotation);
+	Projectile->SetOwner(this);
+
 
 }
 
 void ATurretPawn::CheckFireCondition() 
 {
+	if(InFireRange())
+	{
+		Fire();
+	}
+}
+
+bool ATurretPawn::InFireRange()
+{
 	if (BasePawn) {
 
-		Dist = FVector::Dist(GetActorLocation(), BasePawn->GetActorLocation());
-		if (Dist <= FireRange)
+		float Distance = FVector::Dist(GetActorLocation(), BasePawn->GetActorLocation());
+		if (Distance <= FireRange)
 		{
-			Fire();
+			return true;
 		}
 	}
+	return false;
 }
