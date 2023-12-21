@@ -36,6 +36,14 @@ ABasePawn::ABasePawn()
 
 }
 
+void ABasePawn::HandleDestruction()
+{
+	// TODO: Visual/sound effects
+    SetActorHiddenInGame(true);
+    SetActorTickEnabled(false);
+}
+
+
 // Called to bind functionality to input
 void ABasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -53,11 +61,11 @@ void ABasePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (PlayerControllerRef)
+	if (TurretPlayerController)
 	{	
 		FHitResult HitResult;
 		FHitResult Null;
-		PlayerControllerRef->GetHitResultUnderCursor(
+		TurretPlayerController->GetHitResultUnderCursor(
 			ECollisionChannel::ECC_Visibility,false,HitResult);
 		RotateTurret(HitResult.ImpactPoint); 
 		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
@@ -70,9 +78,8 @@ void ABasePawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerControllerRef = Cast<APlayerController>(GetController());
+	TurretPlayerController = Cast<APlayerController>(GetController());
 }
-
 
 void ABasePawn::RotateTurret(FVector LookAtTarget)
 {

@@ -33,6 +33,12 @@ ATurretPawn::ATurretPawn()
 
 }
 
+void ATurretPawn::HandleDestruction()
+{
+	// TODO: Visual/sound effects
+	Destroy();
+}
+
 // Called when the game starts or when spawned
 void ATurretPawn::BeginPlay()
 {

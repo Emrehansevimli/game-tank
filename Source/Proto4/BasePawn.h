@@ -14,6 +14,11 @@ class PROTO4_API ABasePawn : public APawn
 public:
 	ABasePawn();
 
+	void HandleDestruction();
+
+	APlayerController* TurretPlayerController;
+	APlayerController* GetTurretPlayerController() const { return TurretPlayerController; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -51,7 +56,7 @@ private:
 	float FireRange = 700.f;
 	float Dist;
 
-	APlayerController* PlayerControllerRef;
+	
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AProjectile> ProjectileClass;
