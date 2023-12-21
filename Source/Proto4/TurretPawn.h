@@ -52,7 +52,7 @@ private:
 	class ABasePawn* BasePawn;
 
 	UPROPERTY(EditDefaultsOnly, Category =  "Combat")
-	float FireRange = 700.f;
+	float FireRange = 1000.f;
 	
 	FTimerHandle FireRateTimerHandle;
 	float FireRate = 2.f;

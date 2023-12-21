@@ -30,7 +30,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Damage = 50.f;
 
-	bool IsHittedOnce;
+	bool IsHittedOnce = 0;
 
 
 public:	
