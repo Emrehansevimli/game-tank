@@ -27,12 +27,11 @@ protected:
 	void Turn(float Value); 
 	void Rotate(float Value); 
 	void Fire();
+	void ArrangeHeight(int DistanceRear, int DistanceMiddle, int DistanceForward);
 	
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
@@ -49,16 +48,26 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComp;
 
+	//tank fizik
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ForwardDistancePoint;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* RearDistancePoint;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* MiddleDistancePoint;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float speed = 700.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float turnrate = 100.f;
 	float FireRange = 700.f;
 	float Dist;
-
-	
+	bool IsClimbed = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AProjectile> ProjectileClass;
 
+	FHitResult ForwardHit;
+	FHitResult RearHit;
+	FHitResult MiddleHit;
 };

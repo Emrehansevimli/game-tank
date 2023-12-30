@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/DamageType.h"
+#include "TimerManager.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -44,21 +45,27 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 	auto MyOwner = GetOwner();
 	if (MyOwner == nullptr) return;
 	//alt yok olmasın diye
-	if (IsHittedOnce == 1) return;
-
-
+	//if (IsHittedOnce == 1) return;
 
 	auto MyOwnerInstigator = MyOwner->GetInstigatorController();
 	auto DamageTypeClass = UDamageType::StaticClass();
 
-	if (OtherActor && OtherActor != this && OtherActor != MyOwner)
+	if (IsHittedOnce != 1 && OtherActor && OtherActor != this && OtherActor != MyOwner)
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwnerInstigator, this, DamageTypeClass);
 		ProjectileMesh->SetEnableGravity(true);
 		IsHittedOnce = 1;
-		//Destroy();
 	}
+	if(IsTimerStarted == 0)
+	{
+		GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AProjectile::Erase, FireRate, true);
+		IsTimerStarted++;
+	}	
 
 }
 
+void AProjectile::Erase()
+{
+	Destroy();
+}
 

@@ -26,11 +26,13 @@ private:
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void Erase();
 
 	UPROPERTY(EditAnywhere)
 	float Damage = 50.f;
 
 	bool IsHittedOnce = 0;
+	int IsTimerStarted = 0;
 
 
 public:	
@@ -40,5 +42,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
+	FTimerHandle DestroyTimerHandle;
+	float FireRate = 3.f;
 
 };

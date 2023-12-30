@@ -11,6 +11,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Projectile.h"
+#include "Engine/World.h"
+#include "Math/Vector.h"
+#include "Math/Rotator.h"
 
 ABasePawn::ABasePawn()
 {
@@ -28,13 +31,22 @@ ABasePawn::ABasePawn()
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 
+	
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
+	//tank fizik
+	ForwardDistancePoint = CreateDefaultSubobject<USceneComponent>(TEXT("ForwardDistancePoint"));
+	ForwardDistancePoint->SetupAttachment(BaseMesh);
 
+	RearDistancePoint = CreateDefaultSubobject<USceneComponent>(TEXT("RearDistancePoint"));
+	RearDistancePoint->SetupAttachment(BaseMesh);
+	
+	MiddleDistancePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MiddleDistancePoint"));
+	MiddleDistancePoint->SetupAttachment(BaseMesh);
 }
 
 void ABasePawn::HandleDestruction()
@@ -66,13 +78,67 @@ void ABasePawn::Tick(float DeltaTime)
 	{	
 		FHitResult HitResult;
 		FHitResult Null;
-		TurretPlayerController->GetHitResultUnderCursor(
-			ECollisionChannel::ECC_Visibility,false,HitResult);
+		TurretPlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility,false,HitResult);
 		RotateTurret(HitResult.ImpactPoint); 
 		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
-
 	}
 
+	//FVector Location = ForwardDistancePoint->GetComponentLocation();
+	//FRotator Rotation = RearDistancePoint->GetComponentRotation();
+	//FVector TargetLocation = GetComponentLocation() + GetForwardVector() * HoldDistance;
+
+	//ForwardDistance 
+	FVector EndForward = ForwardDistancePoint->GetComponentLocation() + ForwardDistancePoint->GetForwardVector() * 1000;
+	GetWorld()->LineTraceSingleByChannel(ForwardHit ,ForwardDistancePoint->GetComponentLocation(), EndForward, ECollisionChannel::ECC_Visibility);
+	int DistanceForward = ForwardHit.ImpactPoint.Z - ForwardDistancePoint->GetComponentLocation().Z;
+	
+	//MiddleDistance 
+	FVector MiddleRear = MiddleDistancePoint->GetComponentLocation() + MiddleDistancePoint->GetForwardVector() * 1000;
+	GetWorld()->LineTraceSingleByChannel(MiddleHit,MiddleDistancePoint->GetComponentLocation(), MiddleRear ,ECollisionChannel::ECC_Visibility);
+	int DistanceMiddle = MiddleHit.ImpactPoint.Z - MiddleDistancePoint->GetComponentLocation().Z;
+
+	//RearDistance 
+	FVector EndRear = RearDistancePoint->GetComponentLocation() + RearDistancePoint->GetForwardVector() * 1000;
+	GetWorld()->LineTraceSingleByChannel(RearHit,RearDistancePoint->GetComponentLocation(), EndRear ,ECollisionChannel::ECC_Visibility);
+	int DistanceRear = RearHit.ImpactPoint.Z - RearDistancePoint->GetComponentLocation().Z;
+
+	DrawDebugSphere(GetWorld(), ForwardHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	DrawDebugSphere(GetWorld(), MiddleHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	DrawDebugSphere(GetWorld(), RearHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	DrawDebugLine(GetWorld(), ForwardDistancePoint->GetComponentLocation(), ForwardHit.ImpactPoint, FColor::Red);
+	DrawDebugLine(GetWorld(), MiddleDistancePoint->GetComponentLocation(), MiddleHit.ImpactPoint, FColor::Red);
+	DrawDebugLine(GetWorld(), RearDistancePoint->GetComponentLocation(), RearHit.ImpactPoint, FColor::Red);
+
+	ArrangeHeight(DistanceRear, DistanceMiddle, DistanceForward);
+
+}
+
+void ABasePawn::ArrangeHeight(int DistanceRear, int DistanceMiddle, int DistanceForward)
+{	
+	FVector UpVector = FVector::UpVector;
+	FVector DownVector = FVector::DownVector;
+	FVector OnVector = FVector::UpVector;
+
+	if(DistanceForward == DistanceRear && DistanceMiddle <= -10)
+	{
+		AddActorLocalOffset(DownVector * 10, true);
+		
+	}
+	else if(DistanceForward >= DistanceRear)
+	{	
+		AddActorLocalOffset(DownVector * (DistanceRear - DistanceForward), true);
+		if(IsClimbed == false){
+			AddActorLocalOffset(DownVector * (DistanceRear - DistanceForward), true);
+			IsClimbed = true;
+		}
+		UE_LOG(LogTemp, Display, TEXT("Forward = %d"),DistanceForward);
+		UE_LOG(LogTemp, Display, TEXT("Middle = %d"),DistanceMiddle);
+		UE_LOG(LogTemp, Display, TEXT("Rear = %d"),DistanceRear);
+	}
+	else if(DistanceForward == DistanceRear && IsClimbed == true)
+	{
+		IsClimbed = false;
+	}
 }
 
 void ABasePawn::BeginPlay()
