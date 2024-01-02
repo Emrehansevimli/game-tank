@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "BasePawn.h"
 #include "TurretPawn.h"
+#include "EnemyPawn.h"
 
 void ACppGameModeBase::ActorDied(AActor *DeadActor)
 {
@@ -20,6 +21,10 @@ void ACppGameModeBase::ActorDied(AActor *DeadActor)
     else if (ATurretPawn* DestroyedTurret = Cast<ATurretPawn>(DeadActor))
     {
         DestroyedTurret->HandleDestruction();
+    }
+    else if (AEnemyPawn* DestroyedEnemy = Cast<AEnemyPawn>(DeadActor))
+    {
+        DestroyedEnemy->HandleDestruction();
     }
 }
 

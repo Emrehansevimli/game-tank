@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "TurretPawn.generated.h"
+#include "EnemyPawn.generated.h"
 
 UCLASS()
-class PROTO4_API ATurretPawn : public APawn
+class PROTO4_API AEnemyPawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	ATurretPawn();
+	AEnemyPawn();
 
 	void HandleDestruction();
 
@@ -33,6 +33,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Comps", meta = (AllowPrivateAccess = "true"))

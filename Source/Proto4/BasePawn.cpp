@@ -102,12 +102,12 @@ void ABasePawn::Tick(float DeltaTime)
 	GetWorld()->LineTraceSingleByChannel(RearHit,RearDistancePoint->GetComponentLocation(), EndRear ,ECollisionChannel::ECC_Visibility);
 	int DistanceRear = RearHit.ImpactPoint.Z - RearDistancePoint->GetComponentLocation().Z;
 
-	DrawDebugSphere(GetWorld(), ForwardHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
-	DrawDebugSphere(GetWorld(), MiddleHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
-	DrawDebugSphere(GetWorld(), RearHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
-	DrawDebugLine(GetWorld(), ForwardDistancePoint->GetComponentLocation(), ForwardHit.ImpactPoint, FColor::Red);
-	DrawDebugLine(GetWorld(), MiddleDistancePoint->GetComponentLocation(), MiddleHit.ImpactPoint, FColor::Red);
-	DrawDebugLine(GetWorld(), RearDistancePoint->GetComponentLocation(), RearHit.ImpactPoint, FColor::Red);
+	//DrawDebugSphere(GetWorld(), ForwardHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	//DrawDebugSphere(GetWorld(), MiddleHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	//DrawDebugSphere(GetWorld(), RearHit.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+	//DrawDebugLine(GetWorld(), ForwardDistancePoint->GetComponentLocation(), ForwardHit.ImpactPoint, FColor::Red);
+	//DrawDebugLine(GetWorld(), MiddleDistancePoint->GetComponentLocation(), MiddleHit.ImpactPoint, FColor::Red);
+	//DrawDebugLine(GetWorld(), RearDistancePoint->GetComponentLocation(), RearHit.ImpactPoint, FColor::Red);
 
 	ArrangeHeight(DistanceRear, DistanceMiddle, DistanceForward);
 
@@ -117,23 +117,33 @@ void ABasePawn::ArrangeHeight(int DistanceRear, int DistanceMiddle, int Distance
 {	
 	FVector UpVector = FVector::UpVector;
 	FVector DownVector = FVector::DownVector;
-	FVector OnVector = FVector::UpVector;
 
-	if(DistanceForward == DistanceRear && DistanceMiddle <= -10)
+	
+
+	if(DistanceForward == DistanceRear && DistanceMiddle < 0 && IsClimbed == false)
 	{
-		AddActorLocalOffset(DownVector * 10, true);
+		AddActorLocalOffset(DownVector, true);
 		
 	}
-	else if(DistanceForward >= DistanceRear)
+	else if(DistanceForward > DistanceRear && IsClimbed == false)
 	{	
-		AddActorLocalOffset(DownVector * (DistanceRear - DistanceForward), true);
-		if(IsClimbed == false){
-			AddActorLocalOffset(DownVector * (DistanceRear - DistanceForward), true);
-			IsClimbed = true;
-		}
-		UE_LOG(LogTemp, Display, TEXT("Forward = %d"),DistanceForward);
-		UE_LOG(LogTemp, Display, TEXT("Middle = %d"),DistanceMiddle);
-		UE_LOG(LogTemp, Display, TEXT("Rear = %d"),DistanceRear);
+		//+2 because of the float to int conversion
+		AddActorLocalOffset(UpVector * (DistanceForward - DistanceRear + 2), true);
+		//UE_LOG(LogTemp, Display, TEXT("Forward = %d"),DistanceForward);
+		//UE_LOG(LogTemp, Display, TEXT("Middle = %d"),DistanceMiddle);
+		//UE_LOG(LogTemp, Display, TEXT("Rear = %d"),DistanceRear);
+		//UE_LOG(LogTemp, Display, TEXT("IsClimbed = %d"),IsClimbed);
+		IsClimbed = true;
+	}
+	else if(DistanceForward < DistanceRear && IsClimbed == false)
+	{	
+		//+2 because of the float to int conversion
+		AddActorLocalOffset(UpVector * (DistanceRear - DistanceForward + 2), true);
+		//UE_LOG(LogTemp, Display, TEXT("Forward = %d"),DistanceForward);
+		//UE_LOG(LogTemp, Display, TEXT("Middle = %d"),DistanceMiddle);
+		//UE_LOG(LogTemp, Display, TEXT("Rear = %d"),DistanceRear);
+		//UE_LOG(LogTemp, Display, TEXT("IsClimbed = %d"),IsClimbed);
+		IsClimbed = true;
 	}
 	else if(DistanceForward == DistanceRear && IsClimbed == true)
 	{
