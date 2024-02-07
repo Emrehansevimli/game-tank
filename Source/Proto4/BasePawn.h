@@ -18,6 +18,7 @@ public:
 
 	APlayerController* TurretPlayerController;
 	APlayerController* GetTurretPlayerController() const { return TurretPlayerController; }
+	FVector Equal;
 
 protected:
 	virtual void BeginPlay() override;
@@ -26,8 +27,14 @@ protected:
 	void Move(float Value);
 	void Turn(float Value); 
 	void Rotate(float Value); 
+	UFUNCTION(BlueprintCallable)
 	void Fire();
+	UFUNCTION(BlueprintCallable)
+	void FireReleased();
+	UFUNCTION(BlueprintCallable)
+	void FirePressed();
 	void ArrangeHeight(int DistanceRear, int DistanceMiddle, int DistanceForward);
+	bool EqualVectors(const FVector& Vector1, const FVector& Vector2);
 	
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -67,7 +74,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AProjectile> ProjectileClass;
 
+	FTimerHandle FireRateTimerHandle;
+	float FireRate = 1.f;
+
 	FHitResult ForwardHit;
 	FHitResult RearHit;
 	FHitResult MiddleHit;
+
 };

@@ -14,6 +14,7 @@
 #include "Engine/World.h"
 #include "Math/Vector.h"
 #include "Math/Rotator.h"
+#include "TimerManager.h"
 
 ABasePawn::ABasePawn()
 {
@@ -49,6 +50,13 @@ ABasePawn::ABasePawn()
 	MiddleDistancePoint->SetupAttachment(BaseMesh);
 }
 
+void ABasePawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	TurretPlayerController = Cast<APlayerController>(GetController());
+}
+
 void ABasePawn::HandleDestruction()
 {
 	// TODO: Visual/sound effects
@@ -65,13 +73,21 @@ void ABasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ABasePawn::Move);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ABasePawn::Turn);
 	PlayerInputComponent->BindAxis(TEXT("Rotate"), this, &ABasePawn::Rotate);
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ABasePawn::Fire);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ABasePawn::FirePressed);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Released, this, &ABasePawn::FireReleased);
 
 }
 
+bool ABasePawn::EqualVectors(const FVector& Vector1, const FVector& Vector2)
+{
+    return Vector1.X == Vector2.X && Vector1.Y == Vector2.Y && Vector1.Z == Vector2.Z;
+}
+
+
 // Called every frame
 void ABasePawn::Tick(float DeltaTime)
-{
+{	
+
 	Super::Tick(DeltaTime);
 
 	if (TurretPlayerController)
@@ -79,7 +95,20 @@ void ABasePawn::Tick(float DeltaTime)
 		FHitResult HitResult;
 		FHitResult Null;
 		TurretPlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility,false,HitResult);
-		RotateTurret(HitResult.ImpactPoint); 
+		if(HitResult.ImpactPoint == FVector(0.f,0.f,0.f))
+		{
+			UE_LOG(LogTemp, Display, TEXT("NULL"));
+		}
+		else if(EqualVectors(Equal, HitResult.ImpactPoint))
+		{
+			UE_LOG(LogTemp, Display, TEXT("SAME"));
+		}
+		else{
+			RotateTurret(HitResult.ImpactPoint); 
+		}
+
+	Equal = HitResult.ImpactPoint;
+
 		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
 	}
 
@@ -151,13 +180,6 @@ void ABasePawn::ArrangeHeight(int DistanceRear, int DistanceMiddle, int Distance
 	}
 }
 
-void ABasePawn::BeginPlay()
-{
-	Super::BeginPlay();
-
-	TurretPlayerController = Cast<APlayerController>(GetController());
-}
-
 void ABasePawn::RotateTurret(FVector LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TurretMesh->GetComponentLocation();
@@ -206,4 +228,17 @@ void ABasePawn::Fire()
 	auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Location, Rotation);
 	Projectile->SetOwner(this);
 
+}
+
+void ABasePawn::FirePressed()
+{
+	GetWorldTimerManager().SetTimer(FireRateTimerHandle, this, &ABasePawn::Fire, FireRate, true, 0.f);
+	//UE_LOG(LogTemp, Display, TEXT("Shoot"));
+
+}
+
+void ABasePawn::FireReleased()
+{
+	GetWorldTimerManager().ClearTimer(FireRateTimerHandle);
+	//UE_LOG(LogTemp, Display, TEXT("Released"));
 }
